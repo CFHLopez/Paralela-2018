@@ -2,89 +2,83 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
-
+#include <stdio.h>
+#include <stdlib.h>
 /*
 AUTOR: CHRISTIÁN F. H. LÓPEZ CHÁVEZ
 DESCRIPCIÓN: RELLENAR MATRIZ
 FECHA: 17/08/2018
 */
 using namespace std;
-
-int main(int argc, char** argv){
-  int M = 9;
-  int MATRIZ[M-1][M-1];
+void MATRIZ(int M[][8]){
   int i,j;
-  for (i=0;i<M;i++){
-    for(j=0;j<M;j++){
-      MATRIZ[i][j] = 0;
+  for(i=0;i<9;i++){
+    for(j=0;j<9;j++){
+      M[i][j] = 0;
     }
   }
-  //"[0;1;7][5;3;2][8;3;9]" <- SECUENCIA DE PRUEBA
-  string A;
-  string V;
-  string CADENA;
-  string CADENA2;
-  string CADENA3;
-  string FINAL;
-  cout << "INGRESE SECUENCIA" << endl;
-  cin >> A;
-  stringstream stream(A);
-  //QUITAMOS LAS COMILLAS
-  while (getline(stream,V,'"')){
-    if (V != ""){
-      CADENA = CADENA + V;
-    }
-  }
-  //QUITAMOS EL 1ER PARENTESIS CUADRADO
-  stringstream hola(CADENA);
-  while (getline(hola,V,'[')){
-    if (V != ""){
-      CADENA2 = CADENA2 + V;
-    }
-  }
-  //QUITAMOS EL 2DO PARENTESIS CUADRADO
-  stringstream ultimo(CADENA2);
-  while (getline(ultimo,V,']')){
-    if(V != ""){
-      CADENA3 = CADENA3 + V;
-    }
-  }
-  //QUITAMOS EL PTO Y COMA
-  stringstream casi(CADENA3);
-  while (getline(casi,V,';')){
-    if(V != ""){
-      FINAL = FINAL + V;
-      //STRING DE PUROS NUMEROS
-    }
-  }
-  //LARGO DEL STRING
-  int LARGO = FINAL.size();
-  //CHAR DE NUMEROS
-  char NUMEROS[LARGO-1];
-  //NUMEROS DEL STRING A CHAR
-  strcpy(NUMEROS,FINAL.c_str());
-  int CONTADOR = 0;
-  int X,Y;
-  for (i=0;i<LARGO;i++){
-    //RESTAMOS -48 PARA PASAR DE ASCII A INT
-    if (CONTADOR == 0){
-      X = NUMEROS[i]-48;
-      CONTADOR++;
-    }
-    if (CONTADOR == 1){
-      Y = NUMEROS[i]-48;
-      CONTADOR++;
-    }
-    if (CONTADOR == 2){
-      CONTADOR = 0;
-      MATRIZ[X][Y] = NUMEROS[i]-48;
-    }
-  }
-  //MOSTRAMOS EL SUDOLU FINAL RELLLENADO
-  for (i=0;i<M;i++){
-    for(j=0;j<M;j++){
-      cout << MATRIZ[i][j];
+}
+void MOSTRAR(int M[][8]){
+  int i,j;
+  for(i=0;i<9;i++){
+    for(j=0;j<9;j++){
+      cout << M[i][j];
     }
     cout << endl;
   }
+}
+void MOSTRARF(int A[],int H){
+  int i;
+  for(i=0;i<H;i++){
+    cout << A[i];
+  }
+  cout << endl;
+}
+void AGREGAR(int M[][8],int F[],int C[],int V[],int X){
+  int i;
+  for(i=0;i<X;i++){
+    M[F[i]][C[i]]=V[i];
+  }
+}
+int main(int argc, char** argv){
+  int SUDOKU[8][8];
+  MATRIZ(SUDOKU);
+  int X, i, Y=0;
+  //CONTAMOS EL LARGO DE LOS CARACTERES
+  int LARGO = strlen(argv[1]);
+  //CANTIDAD DE NUMEROS A AGREGAR
+  int CANT = LARGO/7;
+  //NUMERO DE DIGITOS
+  int XXX = (3*CANT)-1;
+  //ARREGLO DE LOS NUMEROS
+  int NUM[XXX];
+  char ARREGLO[LARGO-1];
+  //PASAMOS LOS CARACTERES A UN ARREGLO
+  strcpy(ARREGLO,argv[1]);
+  //RECORREMOS EL ARREGLO
+  for(i=0;i<LARGO;i++){
+    if (ARREGLO[i]>47 && ARREGLO[i]<58){
+      int X = ARREGLO[i] - 48;
+      NUM[Y] = X;
+      Y++;
+    }
+  }
+  int FILAS[CANT-1];
+  int COLUM[CANT-1];
+  int VALOR[CANT-1];
+  int F=0, C=0, V=0;
+  for(i=0;i<=XXX;i=i+3){
+    FILAS[F] = NUM[i];
+    F++;
+  }
+  for(i=1;i<=XXX;i=i+3){
+    COLUM[C] = NUM[i];
+    C++;
+  }
+  for(i=2;i<=XXX;i=i+3){
+    VALOR[V] = NUM[i];
+    V++;
+  }
+  AGREGAR(SUDOKU,FILAS,COLUM,VALOR,CANT);
+  MOSTRAR(SUDOKU);
 }
